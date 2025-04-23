@@ -15,7 +15,7 @@ Route::prefix("/posts")->group(function () {
     Route::post("/", [PostController::class, "store"])->name("posts.store");
     Route::get("/{id}", [PostController::class, "show"])->where('id', '[0-9]+')->name("posts.show");
     Route::get("/{id}/edit", [PostController::class, "edit"])->where('id', '[0-9]+')->name("posts.edit");
-    Route::put("/{id}", [PostController::class, "update"])->where('id', '[0-9]+')->name("posts.update");
+    Route::put("/{id}", [PostController::class, "update"])->name("posts.update");
     Route::delete("/{id}", [PostController::class, "destroy"])->where('id', '[0-9]+')->name("posts.destroy");
 });
 

@@ -10,8 +10,16 @@
             {{ $post->title }}
         </h1>
 
+        @if(isset($post->author->name))
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                Author name: <span class="font-medium text-gray-700">{{ $post->author->name }}</span> 
+                <span class="text-base text-gray-500">at</span> 
+                <span class="text-gray-600">{{ $post->created_at->format('F j, Y, g:i a') }}</span>
+            </h3>
+        @endif
+
         <div class="text-gray-700 leading-relaxed mb-6 whitespace-pre-wrap">
-            {{ $post->content }}
+            {{ $post->body }}
         </div>
 
         <div class="mt-8 border-t pt-6 flex items-center space-x-4">

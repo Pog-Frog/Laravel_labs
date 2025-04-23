@@ -24,9 +24,14 @@
                 <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
                     <h2 class="text-xl font-semibold text-gray-900 mb-2">
                         <a href="{{ route('posts.show', ['id' => $post->id]) }}" class="hover:text-blue-600">
-                            {{ $post->title }}
+                           Title:  {{ $post->title }} <span class="text-gray-600 text-sm">{{ $post->created_at->format('F j, Y, g:i a') }}</span>
                         </a>
                     </h2>
+                    @if(isset($post->author->name))
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                           Author name:  {{$post->author->name}}
+                        </h3>
+                    @endif
                     <p class="text-gray-700 mb-4">
                         {{ $post->content }} 
                     </p>
@@ -45,7 +50,7 @@
 
                         <span class="text-gray-300">|</span> 
 
-                        <form method="post" action="{{ route('posts.destroy', ['id' => $post->id]) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                        <form method="post" action="{{ route('posts.destroy', ['id' => $post->id]) }}" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-500 hover:text-red-700">
@@ -55,6 +60,7 @@
                     </div>
                 </div>
             @endforeach
+            {{ $posts->links() }}
         </div>
     @endif
 </div>

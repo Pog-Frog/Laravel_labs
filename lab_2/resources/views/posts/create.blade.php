@@ -10,23 +10,50 @@
         @csrf 
 
         <div class="mb-4">
+            <label for="author" class="block mb-1">Author:</label>
+            <select name="author" id="author" class="w-full p-2 border border-gray-300 rounded">
+                @foreach ($users as $user)
+                    <option value="{{$user->id}}"> {{$user->name}} </option>
+                @endforeach
+            </select>
+            @error('author')
+                <p class="text-red-500 bg-pink-300 p-2 mt-2 rounded-2xl w-fit">
+                    {{$message}}
+                </p>
+            @enderror
+        </div>
+
+        <div class="mb-4">
             <label for="title" class="block mb-1">Title:</label>
             <input
                 type="text"
                 id="title"
                 name="title"
                 class="w-full p-2 border border-gray-300 rounded"
+                value="{{@old("title")}}"
             >
+            @error('title')
+                <p class="text-red-500 bg-pink-300 p-2 mt-2 rounded-2xl w-fit">
+                    {{$message}}
+                </p>
+            @enderror
         </div>
 
         <div class="mb-4">
-            <label for="content" class="block mb-1">Content:</label>
+            <label for="body" class="block mb-1">Content:</label>
             <textarea
-                id="content"
-                name="content"
+                id="body"
+                name="body"
                 rows="5"
                 class="w-full p-2 border border-gray-300 rounded"
-            ></textarea>
+            >
+                {{@old('body')}}
+            </textarea>
+            @error('body')
+                <p class="text-red-500 bg-pink-300 p-2 mt-2 rounded-2xl w-fit">
+                    {{$message}}
+                </p>
+            @enderror
         </div>
 
         <div>

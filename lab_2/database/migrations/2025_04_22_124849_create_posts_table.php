@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('content');
+            $table->text('body');
+            $table->boolean('enabled')->default(true);
+            $table->foreignId('user_id')->constrained('users');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

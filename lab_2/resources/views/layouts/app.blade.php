@@ -13,7 +13,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
-    @include("header")
+    @include("includes.header")
     @yield('content')
 </body>
 </html>

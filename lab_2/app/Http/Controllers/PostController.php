@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Repositories\PostRepository;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -14,25 +15,31 @@ class PostController extends Controller
 
     public function index()
     {
-        $posts = $this->postRepository->getAllPosts();
+        $posts = $this->postRepository->getAllPosts(4);
         return view('posts.index', ['posts' => $posts]);
     }
 
     public function create()
     {
-        return view('posts.create');
+        $users = User::all();
+        return view('posts.create', ['users' => $users]);
     }
 
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
+            'title' => 'required|string|min:10|max:255',
+            'body' => 'required|string|min:10',
+            'author' => 'required|exists:users,id',
         ]);
+        
+
+        $user = User::query()->find($validatedData['author']);
 
         $post = $this->postRepository->createPost(
             $validatedData['title'],
-            $validatedData['content']
+            $validatedData['body'],
+            $user
         );
 
         if (!$post) {
@@ -61,20 +68,26 @@ class PostController extends Controller
             abort(404);
         }
 
-        return view('posts.edit', ['post' => $post]);
+        $users = User::all();
+
+        return view('posts.edit', ['post' => $post, 'users' => $users]);
     }
 
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
+            'title' => 'required|string|min:10|max:255',
+            'body' => 'required|string|min:10',
+            'author' => 'required|exists:users,id',
         ]);
+
+        $user = User::query()->find($validatedData['author']);
 
         $updatedPost = $this->postRepository->updatePost(
             $id,
             $validatedData['title'],
-            $validatedData['content']
+            $validatedData['body'],
+            $user
         );
 
         if (!$updatedPost) {
