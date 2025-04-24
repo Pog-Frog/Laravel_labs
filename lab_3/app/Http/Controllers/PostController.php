@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Repositories\PostRepository;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Post;
+use App\Events\PostCreatedEvent;
 
 class PostController extends Controller
 {
@@ -16,7 +19,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = $this->postRepository->getAllPosts(4);
-        return view('posts.index', ['posts' => $posts]);
+        return view('dashboard', ['posts' => $posts]);
     }
 
     public function create()
@@ -30,11 +33,10 @@ class PostController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|min:10|max:255',
             'body' => 'required|string|min:10',
-            'author' => 'required|exists:users,id',
         ]);
         
 
-        $user = User::query()->find($validatedData['author']);
+        $user = Auth::user();
 
         $post = $this->postRepository->createPost(
             $validatedData['title'],
@@ -45,6 +47,8 @@ class PostController extends Controller
         if (!$post) {
             return back()->with('error', 'Failed to create post. Please try again.')->withInput();
         }
+
+        event(new PostCreatedEvent($post));
 
         return redirect()->route('posts.index')->with('success', 'Post created successfully!');
     }
@@ -62,6 +66,10 @@ class PostController extends Controller
 
     public function edit(string $id)
     {
+        if(Post::query()->find($id)->user_id != Auth::user()->id) {
+            return back()->with('error', 'You are not authorized to edit this post.');
+        }
+
         $post = $this->postRepository->getPostById($id);
 
         if (!$post) {
@@ -75,13 +83,16 @@ class PostController extends Controller
 
     public function update(Request $request, string $id)
     {
+        if(Post::query()->find($id)->user_id != Auth::user()->id) {
+            return back()->with('error', 'You are not authorized to edit this post.');
+        }
+
         $validatedData = $request->validate([
             'title' => 'required|string|min:10|max:255',
             'body' => 'required|string|min:10',
-            'author' => 'required|exists:users,id',
         ]);
 
-        $user = User::query()->find($validatedData['author']);
+        $user = Auth::user();
 
         $updatedPost = $this->postRepository->updatePost(
             $id,
@@ -99,6 +110,10 @@ class PostController extends Controller
 
     public function destroy(string $id)
     {
+        if(Post::query()->find($id)->user_id != Auth::user()->id) {
+            return back()->with('error', 'You are not authorized to edit this post.');
+        }
+
         $deletedPost = $this->postRepository->deletePost($id);
 
         if (!$deletedPost) {

@@ -1,27 +1,9 @@
-@extends('layouts.app')
-
-@section('title', 'Create Post')
-
-@section('content')
+<x-app-layout>
 <div class="max-w-lg mx-auto mt-10 p-6">
     <h1 class="text-xl font-semibold mb-4">Create a New Post</h1>
 
     <form method="POST" action="{{ route('posts.store') }}">
         @csrf 
-
-        <div class="mb-4">
-            <label for="author" class="block mb-1">Author:</label>
-            <select name="author" id="author" class="w-full p-2 border border-gray-300 rounded">
-                @foreach ($users as $user)
-                    <option value="{{$user->id}}"> {{$user->name}} </option>
-                @endforeach
-            </select>
-            @error('author')
-                <p class="text-red-500 bg-pink-300 p-2 mt-2 rounded-2xl w-fit">
-                    {{$message}}
-                </p>
-            @enderror
-        </div>
 
         <div class="mb-4">
             <label for="title" class="block mb-1">Title:</label>
@@ -66,4 +48,4 @@
         </div>
     </form>
 </div>
-@endsection
+</x-app-layout>
